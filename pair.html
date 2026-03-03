@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPIDER XD PAIR CONNECT</title>
+    <link rel="icon" href="https://files.catbox.moe/9z2ixp.jpg" type="image/jpg">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #030305;
+            --card-bg: rgba(10, 10, 15, 0.7);
+            --card-border: rgba(255, 0, 60, 0.2);
+            --primary: #ff003c; /* Rouge Spider */
+            --primary-glow: rgba(255, 0, 60, 0.5);
+            --error: #ff3b30;
+            --success: #00ff88;
+            --text-main: #ffffff;
+            --text-muted: #8b9bb4;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background Web Effect */
+        .ambient-light {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(255, 0, 60, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        canvas#particles {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* Main Card */
+        .interface-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 60, 0.1);
+            transition: 0.4s ease;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            width: 55px;
+            height: 55px;
+            background: #000;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .logo-container i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .title-group h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #fff;
+        }
+
+        .title-group p {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Status Bar */
+        .system-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 0, 60, 0.05);
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 0, 60, 0.1);
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Input Group */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            outline: none;
+            transition: 0.3s all;
+            text-align: center;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.15);
+            background: rgba(255, 0, 60, 0.02);
+        }
+
+        /* Button */
+        .action-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s all;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        /* Result Area */
+        .terminal-output {
+            margin-top: 25px;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .code-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 5px;
+            cursor: pointer;
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .footer b { color: var(--primary); }
+
+        /* Toast */
+        #toast {
+            visibility: hidden;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            border: 1px solid var(--primary);
+            font-size: 0.9rem;
+        }
+        #toast.show { visibility: visible; animation: slideUp 0.5s; }
+
+        @keyframes slideUp { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div class="ambient-light"></div>
+    <canvas id="particles"></canvas>
+
+    <div class="interface-card">
+        <div class="header">
+            <div class="logo-container">
+                <i class="fa-solid fa-spider"></i>
+            </div>
+            <div class="title-group">
+                <h1>SPIDER XD PAIRING</h1>
+                <p>ADD NUMBER FOR PAIRING CODE </p>
+            </div>
+        </div>
+
+        <div class="system-status">
+            <div><span class="status-dot"></span>WEB SECURED</div>
+            <div style="color:var(--primary)">V1.0.0</div>
+        </div>
+
+        <div class="input-wrapper">
+            <input type="number" id="number" placeholder="Enter Phone Number" autocomplete="off">
+        </div>
+
+        <button class="action-btn" id="submit">
+            <span>Get Pairing Code</span>
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+
+        <div class="terminal-output" id="output">
+            </div>
+
+        <div class="footer">
+            POWERED BY <b>GAARA TECH</b>
+        </div>
+    </div>
+
+    <div id="toast">Code copied to clipboard!</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <script>
+        // Effet de toile d'araignée (Particules liées)
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = 1.5;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 0, 60, 0.4)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function init() {
+            for (let i = 0; i < 60; i++) particlesArray.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(255, 0, 60, ${0.15 - dist/1500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath(); ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        init(); animate();
+
+        // Logique Pairing
+        const submitBtn = document.getElementById('submit');
+        const outputDiv = document.getElementById('output');
+        const numberInput = document.getElementById('number');
+
+        submitBtn.addEventListener('click', async () => {
+            const num = numberInput.value.trim();
+            if(!num) return;
+
+            outputDiv.innerHTML = `<div style="color:var(--primary); font-family: 'JetBrains Mono'">[ INJECTING PROTOCOL... ]</div>`;
+
+            try {
+                const { data } = await axios.get(`/code?number=${num}`);
+                if (data.code) {
+                    const formatted = data.code.match(/.{1,4}/g).join('-');
+                    outputDiv.innerHTML = `<div class="code-display" onclick="copyCode('${data.code}')">${formatted}</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-transform:uppercase">Click to copy code</div>`;
+                }
+            } catch (e) {
+                outputDiv.innerHTML = `<div style="color:var(--error)">CONNECTION ERROR</div>`;
+            }
+        });
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code);
+            const toast = document.getElementById("toast");
+            toast.className = "show";
+            setTimeout(() => { toast.className = ""; }, 3000);
+        }
+    </script>
+</body>
+  </html
