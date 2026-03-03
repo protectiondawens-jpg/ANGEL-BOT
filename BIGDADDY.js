@@ -211,8 +211,6 @@ async function startIndependentBot(num) {
                     }
                 }
             });
-        }
-    });
 
 //-- AUTO VIEWS ----
 	//-- WELCOME & LEFT ----
