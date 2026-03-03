@@ -343,19 +343,16 @@ if (m.key && nslett.includes(m.key.remoteJid)) {
 
 // --- LOGIQUE AUTO-TYPING COMPLÈTE ---
     if (config && config.autorecording === 'on' && !m.key.fromMe) {
-        try {
-            // Indique "En train d'écrire..." (composing)
-            await sock.sendPresenceUpdate('recording', m.key.remoteJid);
-            //On laisse l'état actif pendant 4 secondes pour faire réaliste
-            setTimeout(async () => {
-                try {
-                    await sock.sendPresenceUpdate('paused', remoteJid);
-                } catch (e) {}
-            }, 4000);
-        } catch (err) {
-            // On ne log pas l'erreur pour ne pas polluer la console si la session est occupée
-        }
-    }
+    try {
+        await sock.sendPresenceUpdate('recording', m.key.remoteJid);
+
+        setTimeout(async () => {
+            try {
+                await sock.sendPresenceUpdate('paused', m.key.remoteJid);
+            } catch (e) {}
+        }, 4000);
+    } catch (err) {}
+}
 
 
 	// --- LOGIQUE AUTO-TYPING ---
